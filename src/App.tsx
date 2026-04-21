@@ -340,8 +340,20 @@ const card: CSSProperties = {
               <label style={lbl}>Photo (optionnel)</label>
               <input type="file" accept="image/*" ref={photoRef} style={{display:"none"}} onChange={handlePhoto}/>
               <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
-                <Btn color={BRAND.navy} onClick={()=>{photoRef.current.removeAttribute("capture");photoRef.current.click();}}>Ordinateur</Btn>
-                <Btn color={BRAND.navy} onClick={()=>{photoRef.current.setAttribute("capture","environment");photoRef.current.click();}}>Caméra</Btn>
+                <Btn color={BRAND.navy} onClick={()=>{photoRef.current?.removeAttribute("capture");photoRef.current?.click();}}>Ordinateur</Btn>
+                <Btn color={BRAND.navy} onClick={()=>{
+  photoRef.current?.removeAttribute("capture");
+  photoRef.current?.click();
+}}>
+  Ordinateur
+</Btn>
+
+<Btn color={BRAND.navy} onClick={()=>{
+  photoRef.current?.setAttribute("capture","environment");
+  photoRef.current?.click();
+}}>
+  Caméra
+</Btn>
                 {form.photo&&<><img src={form.photo} alt="" style={{height:38,borderRadius:5,objectFit:"cover",border:`1px solid ${BRAND.border}`}}/><Btn color={BRAND.danger} onClick={()=>setForm(f=>({...f,photo:null}))}>Supprimer</Btn></>}
               </div>
             </div>
