@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, type CSSProperties } from "react";
 
 const BRAND = { navy:"#003B7A", red:"#E8001C", lightBlue:"#0072BB", bg:"#F4F7FB", border:"#D0DCEC", cardBg:"#FFFFFF", muted:"#5A7A99", success:"#1A7A3C", warning:"#B86000", danger:"#C0001A" };
 
@@ -137,7 +137,26 @@ export default function App() {
   });
 
   const exportJSON=()=>{const a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(data,null,2));a.download="sauvegarde_travaux.json";a.click();};
-  const importJSON=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{try{update(()=>JSON.parse(ev.target.result));showMsg("Données restaurées");}catch{showMsg("Fichier invalide",false);}};r.readAsText(file);};
+  const importJSON = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const text = typeof ev.target?.result === "string" ? ev.target.result : "";
+      if (!text) {
+        showMsg("Fichier invalide", false);
+        return;
+      }
+      update(() => JSON.parse(text));
+      showMsg("Données restaurées");
+    } catch {
+      showMsg("Fichier invalide", false);
+    }
+  };
+  r.readAsText(file);
+};
   const exportCSV=(rows,name)=>{const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(rows.map(r=>r.join(";")).join("\n"));a.download=name;a.click();};
 
   if(!loaded||!data) return <div style={{padding:"2rem",color:BRAND.muted,fontSize:14,background:BRAND.bg,minHeight:"100vh"}}>Chargement...</div>;
@@ -156,9 +175,36 @@ export default function App() {
   const saveParamEdit=i=>{const v=editVal.trim();if(!v)return;update(p=>({...p,[paramTab]:p[paramTab].map((x,idx)=>idx===i?v:x)}));setEditIdx(null);showParamMsg("Modifié");};
   const deleteParamItem=i=>{update(p=>({...p,[paramTab]:p[paramTab].filter((_,idx)=>idx!==i)}));setConfirmDel(null);showParamMsg("Supprimé");};
 
-  const inp={width:"100%",padding:"8px 12px",border:`1px solid ${BRAND.border}`,borderRadius:6,background:"#fff",color:BRAND.navy,fontSize:14,boxSizing:"border-box",outline:"none"};
-  const lbl={fontSize:12,color:BRAND.muted,marginBottom:5,display:"block",fontWeight:500,textTransform:"uppercase",letterSpacing:"0.4px"};
-  const card={background:BRAND.cardBg,border:`1px solid ${BRAND.border}`,borderRadius:10,padding:"1.1rem 1.3rem",marginBottom:12,boxShadow:"0 1px 4px rgba(0,59,122,0.07)"};
+  const inp: CSSProperties = {
+  width: "100%",
+  padding: "8px 12px",
+  border: `1px solid ${BRAND.border}`,
+  borderRadius: 6,
+  background: "#fff",
+  color: BRAND.navy,
+  fontSize: 14,
+  boxSizing: "border-box",
+  outline: "none",
+};
+
+const lbl: CSSProperties = {
+  fontSize: 12,
+  color: BRAND.muted,
+  marginBottom: 5,
+  display: "block",
+  fontWeight: 500,
+  textTransform: "uppercase",
+  letterSpacing: "0.4px",
+};
+
+const card: CSSProperties = {
+  background: BRAND.cardBg,
+  border: `1px solid ${BRAND.border}`,
+  borderRadius: 10,
+  padding: "1.1rem 1.3rem",
+  marginBottom: 12,
+  boxShadow: "0 1px 4px rgba(0,59,122,0.07)",
+};
 
   const typeColors={Peinture:BRAND.lightBlue,"Réparation grille/barrière":BRAND.warning,"Utilisation engin":BRAND.success,"Réparation diverse":"#7A3B8F"};
 
